@@ -251,7 +251,7 @@ app.post("/api/analyze-photo", async (request, response) => {
               { text: "You are helping a patient describe a medical photo to their doctor. Look at this image and write 3-5 short bullet points describing only what you can objectively see: body part/location, color, texture, size, swelling, or any visible changes. Do not diagnose, do not suggest conditions. Start directly with the bullet points, no intro sentence." },
             ],
           }],
-          generationConfig: { maxOutputTokens: 300 },
+          generationConfig: { maxOutputTokens: 1024 },
         }),
       }
     );
@@ -262,8 +262,25 @@ app.post("/api/analyze-photo", async (request, response) => {
       throw new Error(data?.error?.message || "Gemini request failed.");
     }
 
-    const summary = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!summary) throw new Error("Gemini returned an empty response.");
+    // const summary = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    // if (!summary) throw new Error("Gemini returned an empty response.");
+  //   const summary = data?.candidates?.[0]?.content?.parts
+  //   ?.map((part) => part.text)
+  //   .filter(Boolean)
+  //   .join("\n");
+
+  // if (!summary) {
+  // throw new Error("Gemini returned an empty response.");
+  // }
+    const summary = data?.candidates?.[0]?.content?.parts
+  ?.filter((part) => part.text && !part.thought)
+  .map((part) => part.text)
+  .join("\n")
+  .trim();
+
+    if (!summary) {
+  throw new Error("Gemini returned an empty response.");
+  }
 
     response.json({ summary });
   } catch (error) {

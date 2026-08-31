@@ -1,0 +1,12 @@
+# Normalize line endings to LF on commit (CRLF in working copy on Windows is fine)
+* text=auto eol=lf
+
+# Binary files - no conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary

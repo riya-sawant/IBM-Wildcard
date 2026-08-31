@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Camera, MapPin, Building2, Siren, BookOpen, Sun, Moon, Eye, Star, Upload, Loader2, Mic, MicOff, Copy, Check, AlertTriangle, Wallet, LogIn, LogOut } from "lucide-react";
+import { Send, Camera, MapPin, Building2, Siren, BookOpen, Sun, Moon, Eye, Star, Upload, Loader2, Mic, MicOff, Copy, Check, AlertTriangle, Wallet } from "lucide-react";
 import ManageCareCosts from "./ManageCareCosts";
-import AuthModal from "./AuthModal.jsx";
-import { apiFetch, silentRefresh, clearAccessToken } from "./auth.js";
 
 // ---------- Theme tokens ----------
 const THEMES = {
@@ -1646,56 +1644,25 @@ const LEARN_GUIDES = [
 export default function NovaHealth() {
   const [theme, setTheme] = useState("light");
   const [tab, setTab] = useState("home");
-  const [user,  setUser]  = useState(null);    // { id, email } when logged in
-  const [showAuth, setShowAuth] = useState(false);
   const t = THEMES[theme];
-
-  // On mount, attempt a silent token refresh to restore session from httpOnly cookie.
-  useEffect(() => {
-    silentRefresh().then((token) => {
-      // We can't get the user object back from a silent refresh alone,
-      // so just mark the session as restored if we got a token.
-      if (token) setUser({ restored: true });
-    });
-  }, []);
-
-  function handleLogout() {
-    clearAccessToken();
-    setUser(null);
-    // Ask server to revoke the refresh token and clear the httpOnly cookie.
-    fetch("http://localhost:5001/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    }).catch(() => {});
-  }
 
   return (
     <div style={{ background: t.bg, color: "#000000", minHeight: "100vh", fontFamily: "system-ui, sans-serif", transition: "background 0.2s, color 0.2s" }}>
-      <TopBar
-        t={t} theme={theme} setTheme={setTheme} tab={tab} setTab={setTab}
-        user={user} onLogin={() => setShowAuth(true)} onLogout={handleLogout}
-      />
+      <TopBar t={t} theme={theme} setTheme={setTheme} tab={tab} setTab={setTab} />
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "24px 20px 60px" }}>
-        {tab === "home" && <HomeTab t={t} setTab={setTab} user={user} onNeedAuth={() => setShowAuth(true)} />}
+        {tab === "home" && <HomeTab t={t} setTab={setTab} />}
         {tab === "insurance" && <InsuranceTab t={t} />}
         {tab === "noinsurance" && <NoInsuranceTab t={t} />}
-        {tab === "urgent" && <UrgentTab t={t} user={user} onNeedAuth={() => setShowAuth(true)} />}
+        {tab === "urgent" && <UrgentTab t={t} />}
         {tab === "costs"  && <ManageCareCosts t={t} />}
         {tab === "learn"  && <LearnTab  t={t} />}
       </div>
-      {showAuth && (
-        <AuthModal
-          t={t}
-          onAuthenticated={(u) => { setUser(u); setShowAuth(false); }}
-          onClose={() => setShowAuth(false)}
-        />
-      )}
     </div>
   );
 }
 
 // ---------- Top nav ----------
-function TopBar({ t, theme, setTheme, tab, setTab, user, onLogin, onLogout }) {
+function TopBar({ t, theme, setTheme, tab, setTab }) {
   return (
     <div style={{ borderBottom: `1px solid ${t.border}`, position: "sticky", top: 0, background: t.bg, zIndex: 10 }}>
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
@@ -1718,23 +1685,10 @@ function TopBar({ t, theme, setTheme, tab, setTab, user, onLogin, onLogout }) {
             </button>
           ))}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ display: "flex", gap: 6, border: `1px solid ${t.border}`, borderRadius: 8, padding: 3 }}>
-            <ThemeBtn active={theme === "light"} onClick={() => setTheme("light")} icon={Sun} t={t} label="Light" />
-            <ThemeBtn active={theme === "dark"} onClick={() => setTheme("dark")} icon={Moon} t={t} label="Dark" />
-            <ThemeBtn active={theme === "colorblind"} onClick={() => setTheme("colorblind")} icon={Eye} t={t} label="Color-blind" />
-          </div>
-          {user ? (
-            <button onClick={onLogout} title="Sign out"
-              style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, padding: "5px 10px", borderRadius: 6, border: `1px solid ${t.border}`, background: "none", color: t.sub, cursor: "pointer" }}>
-              <LogOut size={13} /> Sign out
-            </button>
-          ) : (
-            <button onClick={onLogin} title="Sign in"
-              style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, padding: "5px 10px", borderRadius: 6, border: "none", background: t.accent, color: "#fff", cursor: "pointer", fontWeight: 600 }}>
-              <LogIn size={13} /> Sign in
-            </button>
-          )}
+        <div style={{ display: "flex", gap: 6, border: `1px solid ${t.border}`, borderRadius: 8, padding: 3 }}>
+          <ThemeBtn active={theme === "light"} onClick={() => setTheme("light")} icon={Sun} t={t} label="Light" />
+          <ThemeBtn active={theme === "dark"} onClick={() => setTheme("dark")} icon={Moon} t={t} label="Dark" />
+          <ThemeBtn active={theme === "colorblind"} onClick={() => setTheme("colorblind")} icon={Eye} t={t} label="Color-blind" />
         </div>
       </div>
     </div>
@@ -1765,7 +1719,7 @@ const NAV_CARDS = [
   { id: "learn",       label: "Learn",           desc: "First aid guides, prevention tips, and when to seek care.", color: "accent" },
 ];
 
-function HomeTab({ t, setTab, user, onNeedAuth }) {
+function HomeTab({ t, setTab }) {
   const [messages, setMessages] = useState([
     { role: "assistant", text: "Hi, I'm Nova. Tell me your symptoms or describe what's going on, and I'll help you understand it — not diagnose it, just help you figure out what questions to ask and where to go next." },
   ]);
@@ -1824,56 +1778,106 @@ function HomeTab({ t, setTab, user, onNeedAuth }) {
 
   useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
+  // async function send() {
+  //   // Strip interim marker before sending
+  //   const text = input.replace(/\u200B.*$/, "").trim();
+  //   if (!text || loading) return;
+  //   if (listening) { recognitionRef.current?.stop(); setListening(false); }
+  //   const userMsg = { role: "user", text };
+  //   const next = [...messages, userMsg];
+  //   setMessages(next);
+  //   setInput("");
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("http://localhost:5001/api/chat", {
+  //     //fetch("https://api.anthropic.com/v1/messages", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         model: "claude-sonnet-4-6",
+  //         max_tokens: 400,
+  //         system:
+  //           "You are Nova, a warm, plain-language health information companion inside an app for people who may not have insurance. " +
+  //           "You are NOT a doctor and must never diagnose or prescribe. Help the person understand possible explanations for a symptom in general terms, " +
+  //           "suggest what to watch for, and always end by suggesting whether this sounds like something to monitor, something for a routine visit, " +
+  //           "or something urgent. Keep responses under 120 words, conversational, no medical jargon without explaining it.",
+  //         messages: next.map((m) => ({ role: m.role, content: m.text })),
+  //       }),
+  //     });
+  //     const data = await res.json();
+  //     const text2 = data?.content?.find((c) => c.type === "text")?.text || "Sorry, I couldn't process that just now.";
+  //     setMessages((cur) => [...cur, { role: "assistant", text: text2 }]);
+  //   } catch {
+  //     setMessages((cur) => [...cur, { role: "assistant", text: "Something went wrong reaching Nova. Please try again." }]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
   async function send() {
-    const text = input.replace(/\u200B.*$/, "").trim();
-    if (!text || loading) return;
+  const text = input.replace(/\u200B.*$/, "").trim();
 
-    // Require authentication before making an AI call.
-    if (!user) {
-      onNeedAuth();
-      return;
-    }
+  if (!text || loading) return;
 
-    if (listening) {
-      recognitionRef.current?.stop();
-      setListening(false);
-    }
-
-    const userMsg = { role: "user", text };
-    const next = [...messages, userMsg];
-
-    setMessages(next);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const response = await apiFetch("http://localhost:5001/api/chat", {
-        method: "POST",
-        body: JSON.stringify({
-          mode: "symptoms",
-          messages: next.map((m) => ({ role: m.role, content: m.text })),
-        }),
-      });
-
-      if (response.status === 401) {
-        onNeedAuth();
-        setLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Nova could not respond.");
-
-      setMessages((cur) => [...cur, { role: "assistant", text: data.message }]);
-    } catch (error) {
-      setMessages((cur) => [
-        ...cur,
-        { role: "assistant", text: error.message || "Something went wrong reaching Nova. Please try again." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+  if (listening) {
+    recognitionRef.current?.stop();
+    setListening(false);
   }
+
+  const userMsg = {
+    role: "user",
+    text,
+  };
+
+  const next = [...messages, userMsg];
+
+  setMessages(next);
+  setInput("");
+  setLoading(true);
+
+  try {
+    const response = await fetch("http://localhost:5001/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: "symptoms",
+        messages: next.map((message) => ({
+          role: message.role,
+          content: message.text,
+        })),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Nova could not respond.");
+    }
+
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      {
+        role: "assistant",
+        text: data.message,
+      },
+    ]);
+  } catch (error) {
+    console.error("Nova frontend error:", error);
+
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      {
+        role: "assistant",
+        text:
+          error.message ||
+          "Something went wrong reaching Nova. Please try again.",
+      },
+    ]);
+  } finally {
+    setLoading(false);
+  }
+}
 
   // Displayed value: render interim portion (after \u200B) in muted italic via a layered approach.
   // Since <input> can't style substrings, we split into committed + interim for the placeholder hint.
@@ -3309,7 +3313,7 @@ function CostLink({ href, label, sub, t }) {
 }
 
 // ---------- Urgent tab — photo + voice report ----------
-function UrgentTab({ t, user, onNeedAuth }) {
+function UrgentTab({ t }) {
   // ── Photo section state ──
   const [file,         setFile]         = useState(null);
   const [preview,      setPreview]      = useState(null);
@@ -3337,15 +3341,14 @@ function UrgentTab({ t, user, onNeedAuth }) {
 
   async function analyzePhoto() {
     if (!preview) return;
-    if (!user) { onNeedAuth(); return; }
     setPhotoLoading(true);
     try {
       const [, mediaType, base64Data] = preview.match(/^data:(.+);base64,(.+)$/);
-      const res = await apiFetch("http://localhost:5001/api/analyze-photo", {
+      const res = await fetch("http://localhost:5001/api/analyze-photo", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mediaType, base64Data }),
       });
-      if (res.status === 401) { onNeedAuth(); return; }
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Request failed.");
       setPhotoSummary(data?.summary || "Could not generate a summary.");
@@ -3440,18 +3443,24 @@ function UrgentTab({ t, user, onNeedAuth }) {
   async function buildVoiceSummary() {
     const text = (transcript + " " + interimText).trim();
     if (!text) return;
-    if (!user) { onNeedAuth(); return; }
     setVoiceLoading(true);
     try {
-      // Proxy through backend — Groq API key stays server-side only.
-      const res = await apiFetch("http://localhost:5001/api/voice-summary", {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        body: JSON.stringify({ text }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 320,
+          system:
+            "You are a medical documentation assistant. The user will give you a voice description of an emergency or medical event. " +
+            "Extract and reformat it as a concise, clear emergency summary a paramedic or ER provider can read in seconds. " +
+            "Use this structure: PATIENT / WHAT HAPPENED / SYMPTOMS / TIME / LOCATION (if mentioned). " +
+            "Keep it under 120 words. Do not diagnose. Use plain language. If information is missing, omit that field.",
+          messages: [{ role: "user", content: text }],
+        }),
       });
-      if (res.status === 401) { onNeedAuth(); setVoiceLoading(false); return; }
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Request failed.");
-      setVoiceSummary(data?.summary || "Could not generate a summary. Please try again.");
+      setVoiceSummary(data?.content?.find(c => c.type === "text")?.text || "Could not generate a summary. Please try again.");
     } catch {
       setVoiceSummary("Something went wrong. Please check your connection and try again.");
     } finally {

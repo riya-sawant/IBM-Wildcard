@@ -3283,36 +3283,6 @@ function NoInsuranceTab({ t }) {
         )}
       </div>
 
-      {/* ── Cost tools ── */}
-      <div style={{ background: t.panel, borderRadius: 10, padding: "14px 16px", marginBottom: 16, border: `1px solid ${t.border}` }}>
-        <div style={{ fontWeight: 700, fontSize: 13, color: t.ink, marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
-          <span aria-hidden="true" style={{ color: t.accent, fontSize: 14 }}>◈</span>
-          Understand &amp; manage costs
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {[
-            { href: "https://price.healthfinder.fl.gov/#!care-bundles", label: "Florida care cost estimator", sub: "Compare costs for common procedures" },
-            { href: state ? `https://www.healthcare.gov/see-plans/#/plan/results?state=${state}` : "https://www.healthcare.gov/see-plans/#/plan/results", label: "See what insurance would cover", sub: "Compare ACA Marketplace plans" },
-            { href: "https://dollarfor.org/", label: "Dollar For — charity care assistance", sub: "Nonprofit that handles hospital bill forgiveness paperwork" },
-            { href: "https://www.healthwellfoundation.org/", label: "HealthWell Foundation grants", sub: "Premiums, deductibles, and co-pays for chronic conditions" },
-            { href: "https://www.usa.gov/health-insurance", label: "USA.gov — government health insurance guide", sub: "Medicaid, CHIP, marketplace, and more" },
-          ].map((item, i) => (
-            <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="ni-link"
-              style={{
-                textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "9px 0", borderBottom: i < 4 ? `1px solid ${t.border}` : "none",
-                gap: 8,
-              }}>
-              <div>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: t.accent }}>{item.label}</div>
-                <div style={{ fontSize: 11, color: t.mute }}>{item.sub}</div>
-              </div>
-              <span aria-hidden="true" style={{ color: t.mute, fontSize: 13, flexShrink: 0 }}>→</span>
-            </a>
-          ))}
-        </div>
-      </div>
-
       {/* ── Source attribution ── */}
       <div style={{ fontSize: 11, color: t.mute, lineHeight: 1.6, paddingTop: 8, borderTop: `1px solid ${t.border}` }}>
         Statistics: KFF analysis of 2024 American Community Survey · U.S. Census Bureau SAHIE program (county estimates 2008–2024) ·

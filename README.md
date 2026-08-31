@@ -161,13 +161,16 @@ PORT=5001
 
 ## Deploying
 
-| Service | Purpose |
-|---|---|
-| [Vercel](https://vercel.com) | Frontend — import repo, set root to `.`, Vite is auto-detected |
-| [Railway](https://railway.app) | Backend — import repo, set root to `backend`, add env variables in Settings |
+Nova Health is deployed as a Vercel Services project. The Vite frontend and Express backend are deployed together under one domain.
 
-After deploying the backend to Railway, update the `localhost:5001` fetch URLs in `src/NovaHealth.jsx` to your Railway domain.
+| Service | Root | Route |
+| --- | --- | --- |
+| Frontend | `.` | `/` |
+| Backend | `backend` | `/api/*` |
 
+Deployment configuration is defined in the root-level `vercel.json` file. Environment variables are configured securely through the Vercel project settings.
+
+Every push to the `main` branch automatically triggers a new production deployment.
 ---
 
 ## Disclaimer

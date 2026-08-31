@@ -85,7 +85,7 @@ IBM Bob was used throughout the entire development process as an AI pair program
 | Frontend | React 19, Vite, Lucide icons |
 | Backend | Node.js, Express, Helmet |
 | AI (chat) | IBM watsonx.ai — Granite (`ibm/granite-4-h-small`) |
-| AI (photo analysis) | Google Gemini Vision (`gemini-3.6-flash`) |
+| AI (photo analysis) | Google Gemini Vision (`gemini-3.5-flash`) |
 | Clinic finder | HRSA Find a Health Center, 211.org, healthcare.gov |
 
 ---

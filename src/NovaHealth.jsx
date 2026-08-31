@@ -3,6 +3,10 @@ import { Send, Camera, MapPin, Building2, Siren, BookOpen, Sun, Moon, Eye, Star,
 import ManageCareCosts from "./ManageCareCosts";
 
 // ---------- Theme tokens ----------
+const API_BASE_URL = import.meta.env.DEV
+  ? "http://localhost:5001"
+  : "";
+
 const THEMES = {
   light: {
     bg: "#FFFFFF", panel: "#F1EFE8", ink: "#2C2C2A", sub: "#5F5E5A", mute: "#8A887F",
@@ -1835,7 +1839,8 @@ function HomeTab({ t, setTab }) {
   setLoading(true);
 
   try {
-    const response = await fetch("http://localhost:5001/api/chat", {
+    //const response = await fetch("http://localhost:5001/api/chat", {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -3344,7 +3349,8 @@ function UrgentTab({ t }) {
     setPhotoLoading(true);
     try {
       const [, mediaType, base64Data] = preview.match(/^data:(.+);base64,(.+)$/);
-      const res = await fetch("http://localhost:5001/api/analyze-photo", {
+      //const res = await fetch("http://localhost:5001/api/analyze-photo", {
+      const res = await fetch(`${API_BASE_URL}/api/analyze-photo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mediaType, base64Data }),

@@ -236,7 +236,8 @@ app.post("/api/analyze-photo", async (request, response) => {
     //     method: "POST",
     //     headers: { "Content-Type": "application/json" },
     const geminiRes = await fetch(
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
+  //"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
   {
     method: "POST",
     headers: {

@@ -3,6 +3,9 @@
 > AI-powered healthcare navigation for the uninsured and underinsured in the US.
 
 ---
+## Live demo
+
+[Launch Nova Health](https://nova-health-mu.vercel.app)
 
 ## Problem statement
 
@@ -26,6 +29,7 @@ Nova Health is a web app that acts as a personal healthcare navigator. It helps 
 | **Learn** | First aid guides, prevention tips, nutrition, mental health, and when to see a doctor |
 
 Additional features:
+
 - Light, dark, and colorblind-friendly themes
 - Voice dictation for the chat (Web Speech API)
 - One-click copy for AI-generated summaries
@@ -104,6 +108,7 @@ IBM-Wildcard/
 ├── public/
 ├── index.html
 ├── vite.config.js
+├── vercel.json               # Vercel frontend/backend routing
 └── package.json
 ```
 

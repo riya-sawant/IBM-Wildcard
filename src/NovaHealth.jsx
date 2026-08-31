@@ -216,6 +216,19 @@ const LEARN_GUIDES = [
     tip: "Even on cloudy days, 80% of UV rays reach the skin — make sunscreen a daily habit year-round.",
   },
 
+  {
+    cat: "Prevention", icon: "🦷", title: "Dental hygiene basics",
+    summary: "Good dental habits prevent cavities, gum disease, and costly procedures.",
+    steps: [
+      "Brush twice daily for 2 minutes with a soft-bristle toothbrush and fluoride toothpaste.",
+      "Replace your toothbrush every 3–4 months, or sooner if bristles are frayed — worn bristles clean far less effectively.",
+      "Never share toothbrushes — they transfer bacteria and viruses between people.",
+      "Store your toothbrush upright in open air, not in a closed container, so it dries between uses.",
+      "Floss once daily — slide gently between each tooth in a C-shape, going below the gumline. Use a fresh section for each gap.",
+    ],
+    tip: "Not flossing leaves up to 40% of tooth surfaces uncleaned. Over time this leads to plaque buildup, gum inflammation (gingivitis), bone loss, and tooth loss — and has been linked to heart disease and diabetes.",
+  },
+
   // ── Nutrition ──
   {
     cat: "Nutrition", icon: "🥦", title: "Eating for immunity",
